@@ -149,7 +149,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         
     }
     
-    func filterViewController(filterViewConfroller: FilterViewController, didUpdateFilters filters: [String : AnyObject]) {
+   func filterViewController(filterViewConfroller: FilterViewController, didUpdateFilters filters: [String : AnyObject]) {
         var categories = filters["categories"] as? [String]
         Business.searchWithTerm(term: "Restraunts", categories: categories){(businesses:[Business]!, error: NSError) -> Void in
             self.businesses = businesses

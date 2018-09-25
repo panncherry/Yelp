@@ -8,25 +8,9 @@
 
 import UIKit
 import MapKit
+import CoreLocation
 
-final class RestrauntsAnnotation: NSObject, MKAnnotation{
-    var coordinate: CLLocationCoordinate2D
-    var name: String?
-    var address: String?
-    
-    init(coordinate: CLLocationCoordinate2D, name: String?, address: String?){
-        self.coordinate = coordinate
-        self.name = name
-        self.address = address
-        
-        super.init()
-        
-    }
-    
-}
-
-
-class BusinessesDetailViewController: UIViewController {
+class BusinessesDetailViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var reviewsCountLabel: UILabel!
@@ -35,7 +19,7 @@ class BusinessesDetailViewController: UIViewController {
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var categoriesLabel: UILabel!
     @IBOutlet weak var ratingImageView: UIImageView!
-    
+    var locationManager : CLLocationManager!
     var business: Business!
     var offset = 0
     var term:String = "All"
@@ -43,6 +27,18 @@ class BusinessesDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let centerLocation = CLLocation(latitude: 37.7833, longitude: -122.4167)
+        goToLocation(location: centerLocation)
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.distanceFilter = 200
+        locationManager.requestWhenInUseAuthorization()
+        mapView.delegate = self
+        // draw circular overlay centered in San Francisco
+        let coordinate = CLLocationCoordinate2D(latitude: 37.7833, longitude: -122.4167)
+        let circleOverlay: MKCircle = MKCircle(center: coordinate, radius: 1000)
+        mapView.addOverlay(circleOverlay)
         
         getBusinesses(forTerm: term, at: offset, categories: category)
     }
@@ -57,19 +53,76 @@ class BusinessesDetailViewController: UIViewController {
                 self.ratingImageView.image = self.business.ratingImage
                 self.thumbImgaeView.setImageWith(self.business.imageURL!)
             }
-    })
-    
-}
-    
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        })
+        
     }
-         */
-
+    
+    func goToLocation(location: CLLocation) {
+        let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        let region = MKCoordinateRegion(center: location.coordinate, span: span)
+        mapView.setRegion(region, animated: false)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == CLAuthorizationStatus.authorizedWhenInUse {
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            let region = MKCoordinateRegion(center: location.coordinate, span: span)
+            mapView.setRegion(region, animated: false)
+        }
+    }
+    
+    // add an Annotation with a coordinate: CLLocationCoordinate2D
+    func addAnnotationAtCoordinate(coordinate: CLLocationCoordinate2D) {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        annotation.title = "An annotation!"
+        mapView.addAnnotation(annotation)
+    }
+    
+    // add an annotation with an address: String
+    func addAnnotationAtAddress(address: String, title: String) {
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(address) { (placemarks, error) in
+            if let placemarks = placemarks {
+                if placemarks.count != 0 {
+                    let coordinate = placemarks.first!.location!
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = coordinate.coordinate
+                    annotation.title = title
+                    self.mapView.addAnnotation(annotation)
+                }
+            }
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let identifier = "customAnnotationView"
+        // custom pin annotation
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
+        if (annotationView == nil) {
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        }
+        else {
+            annotationView!.annotation = annotation
+        }
+        if #available(iOS 9.0, *) {
+            annotationView!.pinTintColor = UIColor.green
+        } else {
+            annotationView?.pinColor = MKPinAnnotationColor.green
+        }
+        return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let circleView = MKCircleRenderer(overlay: overlay)
+        circleView.strokeColor = UIColor.red
+        circleView.lineWidth = 1
+        return circleView
+    }
 }
