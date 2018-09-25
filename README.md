@@ -15,12 +15,13 @@ The following **required** functionality is completed:
 The following **stretch** features are implemented:
 
 - [x] Infinite scroll for restaurant results. (+3pt)
-- [ ] Implement map view of restaurant results. (+3pt)
+- [x] Implement map view of restaurant results. (+3pt)
 - [x] Implement the restaurant detail page. (+2pt)
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [x] List anything else that you can get done to improve the app functionality!
+- ...Add a filter where user can choose one or more categories of their choice.(Still in progress)
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
