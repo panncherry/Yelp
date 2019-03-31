@@ -45,7 +45,9 @@ class YelpClient: AFHTTPRequestOperationManager {
         // For additional parameters, see https://www.yelp.com/developers/documentation/v3/business_search
         
         // Default the location to San Francisco
-        var parameters: [String : AnyObject] = ["term": term as AnyObject, "location": "37.785771,-122.406165" as AnyObject]
+        //var parameters: [String : AnyObject] = ["term": term as AnyObject, "location": "37.785771,-122.406165" as AnyObject]
+        
+         var parameters: [String : AnyObject] = ["term": term as AnyObject, "location": "40.730610,-73.935242" as AnyObject]
         
         if sort != nil {
             parameters["sort_by"] = sort!.rawValue as AnyObject?

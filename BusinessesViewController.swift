@@ -80,11 +80,27 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
     
     //code to load more data
     func loadMoreData() {
-        isMoreDataLoading = true
-        self.loadingMoreViews!.stopAnimating()
         offset += businesses.count
-        getBusinesses(forTerm: term, at: offset, categories: category)
-        self.tableView.reloadData()
+        Business.searchWithTerm(term: term, offset: offset, category: [category], completion: { (businesses: [Business]?, error: Error?) -> Void in
+            
+            if self.isMoreDataLoading {
+                self.businesses = self.businesses + businesses!
+            } else {
+                self.businesses = businesses
+            }
+            self.isMoreDataLoading = false
+            self.loadingMoreViews!.stopAnimating()
+            
+            self.tableView.reloadData()
+            if let businesses = businesses {
+                for business in businesses {
+                    print(business.name!)
+                    print(business.address!)
+                }
+            }
+            
+        }
+        )
     }
     
     override func didReceiveMemoryWarning() {
