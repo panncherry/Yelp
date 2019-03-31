@@ -9,6 +9,16 @@
 
 
 
+## Languages, Pods and Frameworks
+
+- [x] Swift
+- [x] AFNetworking
+- [x] BDBOAuth1Manager
+- [x] MapKit
+- [x] CoreLocation
+
+
+
 ## User Stories
 
 - [x] Table rows for search results should be dynamic height according to the content height.
