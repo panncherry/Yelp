@@ -5,7 +5,7 @@
 
 
 ## API
-[Yelp API](https://www.yelp.com/developers/documentation/v3/business).
+[Yelp API](https://www.yelp.com/developers/documentation/v3/business) provides certian data such as a business's average rating and review count, available through several APIs.
 
 
 
