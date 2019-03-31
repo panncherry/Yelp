@@ -13,11 +13,11 @@
 
 - [x] Table rows for search results should be dynamic height according to the content height.
 - [x] Custom cells should have the proper Auto Layout constraints.
+- [x] Add category filter
 - [x] Search bar should be in the navigation bar.
 - [x] Infinite scroll for restaurant results
 - [x] Implement map view of restaurant results.
 - [x] Implement the restaurant detail page.
-- [x] Map implementation
 
 
 
